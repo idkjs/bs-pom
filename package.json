@@ -12,7 +12,7 @@
   "author": "Murphy Randle",
   "license": "MIT",
   "devDependencies": {
-    "bs-platform": "^5.0.4"
+    "bs-platform": "^9.0.2"
   },
   "dependencies": {
     "bluebird": "^3.5.5"
