@@ -1,10 +1,10 @@
 open Belt;
 module Bluebird = {
   %bs.raw
-  "var Promise = require('bluebird')";
+  {js|global.Promise = require('bluebird')|js};
 
   %bs.raw
-  "Promise.config({ warnings: false })";
+  {js|Promise.config({ warnings: false})|js};
 
   type t('a);
 
@@ -13,16 +13,14 @@ module Bluebird = {
 
   let toJs: t('a) => Js.Promise.t('a) = Obj.magic;
 
-  [@bs.module "bluebird"] external resolve: 'a => t('a) = "";
-  [@bs.module "bluebird"] external reject: 'a => t('a) = "";
-  [@bs.module "bluebird"] external all: array(t('a)) => t(array('a)) = "";
+  [@bs.module "bluebird"] external resolve: 'a => t('a);
+  [@bs.module "bluebird"] external reject: 'a => t('a);
+  [@bs.module "bluebird"] external all: array(t('a)) => t(array('a));
 
   [@bs.send] external flatMap: (t('a), 'a => t('b)) => t('b) = "then";
-  [@bs.send] external tap: (t('a), 'a => unit) => t('a) = "";
-  [@bs.send]
-  external tapCatch: (t('a), Js.Promise.error => unit) => t('a) = "";
-  [@bs.send]
-  external catch: (t('a), Js.Promise.error => t('b)) => t('b) = "";
+  [@bs.send] external tap: (t('a), 'a => unit) => t('a);
+  [@bs.send] external tapCatch: (t('a), Js.Promise.error => unit) => t('a);
+  [@bs.send] external catch: (t('a), Js.Promise.error => t('b)) => t('b);
 };
 
 type pom('a) = Bluebird.t('a);
@@ -47,7 +45,9 @@ let make = (): (pom('a), 'a => unit, exn => unit) => {
 
 let makeWithCallback = () => {
   let (p, resolve, reject) = make();
-  let isFalsy: 'x => bool = [%bs.raw a => {| return a ? true : false|}];
+  let isFalsy: 'x => bool = [%bs.raw
+    {js| function(a){return a ? true : false}|js}
+  ];
   let callback = (err: 'e, result: 'a) =>
     /* The convention with Node or JS callbacks is to
        check an error like this:
